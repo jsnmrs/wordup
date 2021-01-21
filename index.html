@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wordup&uarr;</title>
+  <style>
+    *{box-sizing:border-box}*::after,*::before{box-sizing:border-box}body{font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";margin:0;padding-bottom:2em}header{background-color:#f1f1f1;border-bottom:1px solid #ccc;margin-bottom:1.5em;padding:1em}section{padding:0.25em 1em}h1{margin:0}h2{margin:0 0 0.5em}p{line-height:1.4;margin:0.5em 0 0}textarea{border:1px solid #ccc;height:396px;width:100%}button{background-color:#81ecec;border:1px solid #00cec9;border-radius:0.25em;color:#000;cursor:pointer;font-size:1.5em;padding:0.25em 0.5em;margin-bottom:0.5em}button:focus,button:hover{background:#dff;border:1px solid #81ecec}code{background-color:#f9f9f9;border:1px solid #ccc;border-radius:0.25em;font-size:1em;padding:0.1em 0.3em}.run{padding:2em 1em;text-align:center}.muted{background-color:#eee;border:1px solid #ccc;color:#000;font-size:1em}.muted:focus,.muted:hover{background:#ccc;border:1px solid #ccc}.options{background-color:#f1f1f1;border:1px solid #ccc;margin-top:-5px;padding:0.5em 0.5em 0.75em}.hidden-visually:not(:focus):not(:active){position:absolute;width:1px;height:1px;margin:-1px;border:0;padding:0;white-space:nowrap;clip-path:inset(100%);clip:rect(0 0 0 0);overflow:hidden}@media screen and (min-width: 50em){header{display:flex;align-items:baseline}section{display:flex;align-items:stretch;align-content:stretch}section > *{flex:2 1 auto}.info{padding:0 2em}.run{align-self:center;flex:1 1 auto}}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Wordup&uarr;</h1>
+  <div class="info">
+    <p>Convert Word documents to clean HTML or Markdown.</p>
+  </div>
+</header>
+
+<section class="tool">
+  <div class="before">
+    <h2><label for="wordup">Paste from Word Document</label></h2>
+    <textarea id="wordup"></textarea>
+  </div>
+  <div class="run">
+    <p><button id="convert">Convert<span aria-hidden="true"> &rarr;</span></button><br>
+    <button id="clear" class="muted">Clear<span aria-hidden="true"> &times;</span></button></p>
+  </div>
+  <div class="after">
+    <h2><label for="output">Clean HTML</label></h2>
+    <textarea id="output"></textarea>
+    <div class="options">
+      <p><input type="checkbox" id="targetblank" name="targetblank" /> <label for="targetblank">Add <code>target="_blank"</code> and <code>rel="noopener noreferrer"</code> to links</label></p>
+
+      <p><input type="checkbox" id="domainfilter" name="domainfilter" /> Remove <label for="domainname" class="hidden-visually">Domain name</label> <input type="text" id="domainname" name="domainname" placeholder="example.com" /> <label for="domainfilter">from internal links</label></p>
+
+      <p><input type="checkbox" id="markdown" name="markdown" /> <label for="markdown">Convert to <a href="https://en.wikipedia.org/wiki/Markdown#Example">Markdown</a></label></p>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.0.0/turndown.min.js" integrity="sha512-v9hVAwlYm3ca133Q8GsdUJ6G9vcOgcgBXsIl/sAUqcvAjlTYzMATYkCHsG70fmFIUoFaH7udfdO2gcwrqkRfAw==" crossorigin="anonymous"></script>
+<script src="wordup.js"></script>
+
+</body>
+</html>

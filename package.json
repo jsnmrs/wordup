@@ -1,0 +1,15 @@
+{
+  "name": "Wordup",
+  "description": "Convert Word documents to clean HTML or Markdown",
+  "main": "index.html",
+  "devDependencies": {
+    "eslint": "7.18.0",
+    "serve": "11.3.2"
+  },
+  "scripts": {
+    "eslint": "eslint *.js --fix",
+    "serve": "npx serve",
+    "test": "npm run eslint",
+    "work": "npm run test && npm run serve"
+  }
+}
