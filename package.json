@@ -3,7 +3,7 @@
   "description": "Convert Word documents to clean HTML or Markdown",
   "main": "index.html",
   "devDependencies": {
-    "eslint": "7.18.0",
+    "eslint": "7.26.0",
     "serve": "11.3.2"
   },
   "scripts": {
