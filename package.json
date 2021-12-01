@@ -3,11 +3,11 @@
   "description": "Convert Word documents to clean HTML or Markdown",
   "main": "index.html",
   "devDependencies": {
-    "eslint": "7.32.0",
-    "serve": "12.0.1"
+    "eslint": "8.3.0",
+    "serve": "13.0.2"
   },
   "scripts": {
-    "eslint": "eslint *.js --fix",
+    "eslint": "eslint --fix \"*.js\"",
     "serve": "npx serve",
     "test": "npm run eslint",
     "work": "npm run test && npm run serve"
