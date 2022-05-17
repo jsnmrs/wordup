@@ -17,6 +17,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "16"
+      - run: npm install
       - uses: neverendingqs/gh-action-node-update-deps@v2
         with:
           git-user-email: wise.spot4836@fastmail.com'
