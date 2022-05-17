@@ -1,9 +1,6 @@
-name: Scheduled dependencies update
+name: Dependency mgmt
 on:
   workflow_dispatch: # enable run button on github.com
-  push:
-    branches:
-      - 'dependency-mgmt'
   schedule:
     - cron: '0 23 * * 2'
 
