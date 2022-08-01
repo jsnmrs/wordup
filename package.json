@@ -4,7 +4,7 @@
   "main": "index.html",
   "devDependencies": {
     "eslint": "8.18.0",
-    "serve": "13.0.2"
+    "serve": "14.0.1"
   },
   "scripts": {
     "eslint": "eslint --fix \"*.js\"",
