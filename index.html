@@ -17,27 +17,29 @@
   </div>
 </header>
 
-<section class="tool">
-  <div class="before">
-    <h2><label for="wordup">Paste from Word Document</label></h2>
-    <textarea id="wordup"></textarea>
-  </div>
-  <div class="run">
-    <p><button id="convert">Convert<span aria-hidden="true"> &rarr;</span></button><br>
-    <button id="clear" class="muted">Clear<span aria-hidden="true"> &times;</span></button></p>
-  </div>
-  <div class="after">
-    <h2><label for="output">Clean HTML</label></h2>
-    <textarea id="output"></textarea>
-    <div class="options">
-      <p><input type="checkbox" id="targetblank" name="targetblank" /> <label for="targetblank">Add <code>target="_blank"</code> and <code>rel="noopener noreferrer"</code> to links</label></p>
-
-      <p><input type="checkbox" id="domainfilter" name="domainfilter" /> Remove <label for="domainname" class="hidden-visually">Domain name</label> <input type="text" id="domainname" name="domainname" placeholder="example.com" /> <label for="domainfilter">from internal links</label></p>
-
-      <p><input type="checkbox" id="markdown" name="markdown" /> <label for="markdown">Convert to <a href="https://en.wikipedia.org/wiki/Markdown#Example">Markdown</a></label></p>
+<main>
+  <section class="tool">
+    <div class="before">
+      <h2><label for="wordup">Paste from Word Document</label></h2>
+      <textarea id="wordup"></textarea>
     </div>
-  </div>
-</section>
+    <div class="run">
+      <p><button id="convert">Convert<span aria-hidden="true"> &rarr;</span></button><br>
+      <button id="clear" class="muted">Clear<span aria-hidden="true"> &times;</span></button></p>
+    </div>
+    <div class="after">
+      <h2><label for="output">Clean HTML</label></h2>
+      <textarea id="output"></textarea>
+      <div class="options">
+        <p><input type="checkbox" id="targetblank" name="targetblank" /> <label for="targetblank">Add <code>target="_blank"</code> and <code>rel="noopener noreferrer"</code> to links</label></p>
+
+        <p><input type="checkbox" id="domainfilter" name="domainfilter" /> Remove <label for="domainname" class="hidden-visually">Domain name</label> <input type="text" id="domainname" name="domainname" placeholder="example.com" /> <label for="domainfilter">from internal links</label></p>
+
+        <p><input type="checkbox" id="markdown" name="markdown" /> <label for="markdown">Convert to <a href="https://en.wikipedia.org/wiki/Markdown#Example">Markdown</a></label></p>
+      </div>
+    </div>
+  </section>
+</main>
 
 <script src="https://cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.0.0/turndown.min.js" integrity="sha512-v9hVAwlYm3ca133Q8GsdUJ6G9vcOgcgBXsIl/sAUqcvAjlTYzMATYkCHsG70fmFIUoFaH7udfdO2gcwrqkRfAw==" crossorigin="anonymous"></script>
