@@ -9,6 +9,8 @@ CKEDITOR.replace("wordup", {
   dataIndentationChars: "  ",
   format_tags: "p;h1;h2;h3;h4;h5",
   height: 325,
+  // toolbarCanCollapse: true,
+  // toolbarStartupExpanded: false,
   removeButtons:
     "Underline,Strike,Subscript,Superscript,Anchor,Styles,Specialchar",
   toolbarGroups: [
@@ -83,12 +85,12 @@ function addDomainFilter(string, domain) {
   return filtered;
 }
 
-function addTargetBlank(string) {
+function addLinkRel(string) {
   var plusTarget = string;
 
   plusTarget = plusTarget.replace(
     /<(a\s+(?:[^>]*?\s+)?href="https?([^"]*)")/g,
-    '<$1 target="_blank" rel="noopener noreferrer"'
+    '<$1 rel="noopener noreferrer"'
   );
 
   return plusTarget;
@@ -115,7 +117,7 @@ function wordup() {
   }
 
   if (document.getElementById("targetblank").checked === true) {
-    pasteData = addTargetBlank(pasteData);
+    pasteData = addLinkRel(pasteData);
   }
 
   if (document.getElementById("markdown").checked === true) {
@@ -127,6 +129,6 @@ function wordup() {
 
 document.getElementById("clear").addEventListener("click", clearBoth);
 document.getElementById("convert").addEventListener("click", wordup);
-document.getElementById("targetblank").addEventListener("click", wordup);
+document.getElementById("linkrel").addEventListener("click", wordup);
 document.getElementById("markdown").addEventListener("click", wordup);
 document.getElementById("domainfilter").addEventListener("click", wordup);
