@@ -9,8 +9,6 @@ CKEDITOR.replace("wordup", {
   dataIndentationChars: "  ",
   format_tags: "p;h1;h2;h3;h4;h5",
   height: 325,
-  // toolbarCanCollapse: true,
-  // toolbarStartupExpanded: false,
   removeButtons:
     "Underline,Strike,Subscript,Superscript,Anchor,Styles,Specialchar",
   toolbarGroups: [
