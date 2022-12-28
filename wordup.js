@@ -1,7 +1,7 @@
 /* global CKEDITOR, TurndownService */
 var turndownService = new TurndownService({
   bulletListMarker: "-",
-  headingStyle: "atx"
+  headingStyle: "atx",
 });
 
 // Configure CKEditor window
@@ -17,8 +17,8 @@ CKEDITOR.replace("wordup", {
     { groups: ["list"], name: "paragraph" },
     { groups: ["list"], name: "insert" },
     { groups: ["mode"], name: "document" },
-    { groups: ["styles"], name: "styles" }
-  ]
+    { groups: ["styles"], name: "styles" },
+  ],
 });
 
 function scrubber(string) {

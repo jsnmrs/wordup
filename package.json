@@ -3,13 +3,19 @@
   "description": "Convert Word documents to clean HTML or Markdown",
   "main": "index.html",
   "devDependencies": {
-    "eslint": "8.29.0",
+    "@babel/core": "7.20.7",
+    "@babel/eslint-parser": "7.19.1",
+    "@babel/preset-env": "7.20.2",
+    "eslint": "8.30.0",
+    "eslint-config-prettier": "8.5.0",
+    "prettier": "2.8.1",
     "serve": "14.1.2"
   },
   "scripts": {
-    "eslint": "eslint --fix \"*.js\"",
+    "eslint": "eslint *.js --fix",
+    "prettier": "prettier --write \"*.js\"",
     "serve": "npx serve",
-    "test": "npm run eslint",
+    "test": "npm run prettier && npm run eslint",
     "work": "npm run test && npm run serve"
   }
 }
