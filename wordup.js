@@ -1,7 +1,7 @@
 /* global CKEDITOR, TurndownService */
 var turndownService = new TurndownService({
   bulletListMarker: "-",
-  headingStyle: "atx"
+  headingStyle: "atx",
 });
 
 // Configure CKEditor window
@@ -17,8 +17,8 @@ CKEDITOR.replace("wordup", {
     { groups: ["list"], name: "paragraph" },
     { groups: ["list"], name: "insert" },
     { groups: ["mode"], name: "document" },
-    { groups: ["styles"], name: "styles" }
-  ]
+    { groups: ["styles"], name: "styles" },
+  ],
 });
 
 function scrubber(string) {
@@ -83,12 +83,12 @@ function addDomainFilter(string, domain) {
   return filtered;
 }
 
-function addTargetBlank(string) {
+function addLinkRel(string) {
   var plusTarget = string;
 
   plusTarget = plusTarget.replace(
     /<(a\s+(?:[^>]*?\s+)?href="https?([^"]*)")/g,
-    '<$1 target="_blank" rel="noopener noreferrer"'
+    '<$1 rel="noopener noreferrer"'
   );
 
   return plusTarget;
@@ -115,7 +115,7 @@ function wordup() {
   }
 
   if (document.getElementById("targetblank").checked === true) {
-    pasteData = addTargetBlank(pasteData);
+    pasteData = addLinkRel(pasteData);
   }
 
   if (document.getElementById("markdown").checked === true) {
@@ -127,6 +127,6 @@ function wordup() {
 
 document.getElementById("clear").addEventListener("click", clearBoth);
 document.getElementById("convert").addEventListener("click", wordup);
-document.getElementById("targetblank").addEventListener("click", wordup);
+document.getElementById("linkrel").addEventListener("click", wordup);
 document.getElementById("markdown").addEventListener("click", wordup);
 document.getElementById("domainfilter").addEventListener("click", wordup);
