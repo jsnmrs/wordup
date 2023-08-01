@@ -42,11 +42,11 @@ function scrubber(string) {
     .replace(/\n\n/g, "\n")
     .replace(
       /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/g,
-      "&nbsp;"
+      "&nbsp;",
     )
     .replace(
       /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/g,
-      "&nbsp;"
+      "&nbsp;",
     )
     .replace(/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/g, "&nbsp;")
     .replace(/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/g, "&nbsp;")
@@ -88,7 +88,7 @@ function addLinkRel(string) {
 
   plusTarget = plusTarget.replace(
     /<(a\s+(?:[^>]*?\s+)?href="https?([^"]*)")/g,
-    '<$1 rel="noopener noreferrer"'
+    '<$1 rel="noopener noreferrer"',
   );
 
   return plusTarget;
@@ -110,7 +110,7 @@ function wordup() {
   ) {
     pasteData = addDomainFilter(
       pasteData,
-      document.getElementById("domainname").value
+      document.getElementById("domainname").value,
     );
   }
 
