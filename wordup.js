@@ -83,8 +83,17 @@ function addDomainFilter(string, domain) {
   return filtered;
 }
 
+const wordupEditor = CKEDITOR.instances.wordup;
+const domainFilterCheckbox = document.getElementById("domainfilter");
+const domainNameInput = document.getElementById("domainname");
+const markdownCheckbox = document.getElementById("markdown");
+const outputTextarea = document.getElementById("output");
+const clearButton = document.getElementById("clear");
+const convertButton = document.getElementById("convert");
+const linkRelCheckbox = document.getElementById("linkrel");
+
 function addLinkRel(string) {
-  var plusTarget = string;
+  let plusTarget = string;
 
   plusTarget = plusTarget.replace(
     /<(a\s+(?:[^>]*?\s+)?href="https?([^"]*)")/g,
@@ -95,38 +104,32 @@ function addLinkRel(string) {
 }
 
 function clearBoth() {
-  CKEDITOR.instances.wordup.setData("");
-  document.getElementById("output").value = "";
+  wordupEditor.setData("");
+  outputTextarea.value = "";
 }
 
 function wordup() {
-  var pasteData = CKEDITOR.instances.wordup.getData();
+  const pasteData = wordupEditor.getData();
 
-  pasteData = scrubber(pasteData);
+  let processedData = scrubber(pasteData);
 
-  if (
-    document.getElementById("domainfilter").checked === true &&
-    document.getElementById("domainname").value
-  ) {
-    pasteData = addDomainFilter(
-      pasteData,
-      document.getElementById("domainname").value,
-    );
+  if (domainFilterCheckbox.checked && domainNameInput.value) {
+    processedData = addDomainFilter(processedData, domainNameInput.value);
   }
 
-  if (document.getElementById("targetblank").checked === true) {
-    pasteData = addLinkRel(pasteData);
+  if (linkRelCheckbox.checked) {
+    processedData = addLinkRel(processedData);
   }
 
-  if (document.getElementById("markdown").checked === true) {
-    pasteData = turndownService.turndown(pasteData);
+  if (markdownCheckbox.checked) {
+    processedData = turndownService.turndown(processedData);
   }
 
-  document.getElementById("output").value = pasteData;
+  outputTextarea.value = processedData;
 }
 
-document.getElementById("clear").addEventListener("click", clearBoth);
-document.getElementById("convert").addEventListener("click", wordup);
-document.getElementById("linkrel").addEventListener("click", wordup);
-document.getElementById("markdown").addEventListener("click", wordup);
-document.getElementById("domainfilter").addEventListener("click", wordup);
+clearButton.addEventListener("click", clearBoth);
+convertButton.addEventListener("click", wordup);
+linkRelCheckbox.addEventListener("click", wordup);
+markdownCheckbox.addEventListener("click", wordup);
+domainFilterCheckbox.addEventListener("click", wordup);
