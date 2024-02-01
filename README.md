@@ -8,5 +8,4 @@ Wordup uses [CKEditor 4](https://ckeditor.com/) to do most of the cleaning. Addi
 
 ## Running locally
 
-1. `npm install`
-2. `npm run work`
+1. `npx serve`
