@@ -4,7 +4,7 @@
   "main": "index.html",
   "license": "MIT",
   "dependencies": {
-    "ckeditor4": "4.22.1",
+    "ckeditor4": "4.24.0",
     "turndown": "7.1.2"
   }
 }
