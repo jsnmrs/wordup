@@ -1,4 +1,4 @@
-/* global CKEDITOR, TurndownService */
+/* global DOMPurify, mammoth, TurndownService, WordCleaner */
 const turndownService = new TurndownService({
   bulletListMarker: "-",
   headingStyle: "atx",
@@ -42,17 +42,129 @@ const TextScrubber = (() => {
   };
 })();
 
-// Module to manage CKEditor and output operations
+// Module to manage the paste region and output operations
 const EditorManager = (() => {
+  const region = document.getElementById("wordup");
   const outputTextarea = document.getElementById("output");
+  const fileInput = document.getElementById("docxfile");
+  const statusRegion = document.getElementById("status");
+
+  const setData = (html) => {
+    region.innerHTML = html;
+  };
+
+  const setStatus = (message) => {
+    statusRegion.textContent = message;
+  };
+
+  // Sanitized HTML for the region's content, one block element per line.
+  // Re-parsing normalizes hand-typed content too: browsers that ignore the
+  // defaultParagraphSeparator hint produce divs on Enter, renamed to p here.
+  const getData = () => {
+    const doc = new DOMParser().parseFromString(region.innerHTML, "text/html");
+    Array.from(doc.body.querySelectorAll("div")).forEach((div) => {
+      const paragraph = doc.createElement("p");
+      while (div.firstChild) {
+        paragraph.appendChild(div.firstChild);
+      }
+      div.replaceWith(paragraph);
+    });
+    const html = Array.from(doc.body.children)
+      .map((el) => el.outerHTML)
+      .join("\n");
+    return DOMPurify.sanitize(html, WordCleaner.purifyConfig);
+  };
+
+  const insertHtml = (html) => {
+    document.execCommand(
+      "insertHTML",
+      false,
+      DOMPurify.sanitize(WordCleaner.clean(html), WordCleaner.purifyConfig),
+    );
+  };
+
+  const handlePaste = (event) => {
+    event.preventDefault();
+    const html = event.clipboardData.getData("text/html");
+    if (html) {
+      insertHtml(html);
+    } else {
+      document.execCommand(
+        "insertText",
+        false,
+        event.clipboardData.getData("text/plain"),
+      );
+    }
+  };
+
+  const handleDocx = (file) => {
+    if (!file) {
+      return;
+    }
+    if (!/\.docx$/i.test(file.name)) {
+      setStatus(`Cannot convert ${file.name}. Upload a .docx document.`);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      mammoth
+        .convertToHtml({ arrayBuffer: reader.result })
+        .then((result) => {
+          result.messages.forEach((message) => console.warn(message.message));
+          setData(DOMPurify.sanitize(result.value, WordCleaner.purifyConfig));
+          setStatus(
+            `Converted ${file.name}. Review the content, then select Convert.`,
+          );
+        })
+        .catch(() => {
+          setStatus(`Could not convert ${file.name}.`);
+        });
+    };
+    reader.onerror = () => {
+      setStatus(`Could not read ${file.name}.`);
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    region.classList.remove("dragover");
+    if (event.dataTransfer.files.length) {
+      handleDocx(event.dataTransfer.files[0]);
+      return;
+    }
+    const html = event.dataTransfer.getData("text/html");
+    if (html) {
+      region.focus();
+      insertHtml(html);
+    }
+  };
+
+  const init = () => {
+    document.execCommand("defaultParagraphSeparator", false, "p");
+    region.addEventListener("paste", handlePaste);
+    region.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      region.classList.add("dragover");
+    });
+    region.addEventListener("dragleave", () => {
+      region.classList.remove("dragover");
+    });
+    region.addEventListener("drop", handleDrop);
+    fileInput.addEventListener("change", () => {
+      handleDocx(fileInput.files[0]);
+    });
+  };
 
   const clearBoth = () => {
-    CKEDITOR.instances.wordup.setData("");
+    setData("");
     outputTextarea.value = "";
+    fileInput.value = "";
+    setStatus("");
   };
 
   const wordup = () => {
-    let processedData = TextScrubber.scrub(CKEDITOR.instances.wordup.getData());
+    let processedData = TextScrubber.scrub(getData());
 
     if (
       document.getElementById("domainfilter").checked &&
@@ -77,26 +189,12 @@ const EditorManager = (() => {
 
   return {
     clearBoth,
+    init,
     wordup,
   };
 })();
 
-// CKEditor configuration
-CKEDITOR.replace("wordup", {
-  dataIndentationChars: "  ",
-  format_tags: "p;h1;h2;h3;h4;h5",
-  height: 325,
-  removeButtons:
-    "Underline,Strike,Subscript,Superscript,Anchor,Styles,Specialchar",
-  toolbarGroups: [
-    { name: "basicstyles", groups: ["basicstyles"] },
-    { name: "links", groups: ["links"] },
-    { name: "paragraph", groups: ["list"] },
-    { name: "insert", groups: ["list"] },
-    { name: "document", groups: ["mode"] },
-    { name: "styles", groups: ["styles"] },
-  ],
-});
+EditorManager.init();
 
 // Event listeners for UI controls
 document

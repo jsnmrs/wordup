@@ -7,7 +7,7 @@
   <meta name="author" content="Jason Morris">
   <title>Wordup</title>
   <style>
-    *{box-sizing:border-box}*::after,*::before{box-sizing:border-box}body{font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";margin:0;}.faux-header,footer{background-color:#f1f1f1;padding:1em}.faux-header{border-bottom:1px solid #ccc;margin-bottom:1.5em;}footer{border-top:1px solid #ccc;margin-top:1.5em;padding:3em;}section{padding:0.25em 1em}h1{margin:0}h2{margin:0 0 0.5em}p{line-height:1.4;margin:0.5em 0 0}textarea{border:1px solid #ccc;height:396px;width:100%}button{background-color:#81ecec;border:1px solid #00cec9;border-radius:0.25em;color:#000;cursor:pointer;font-size:1.5em;padding:0.25em 0.5em;margin-bottom:0.5em}button:focus,button:hover{background:#dff;border:1px solid #81ecec}code{background-color:#f9f9f9;border:1px solid #ccc;border-radius:0.25em;font-size:1em;padding:0.1em 0.3em}.run{padding:2em 1em;text-align:center}.muted{background-color:#eee;border:1px solid #ccc;color:#000;font-size:1em}.muted:focus,.muted:hover{background:#ccc;border:1px solid #ccc}.options{background-color:#f1f1f1;border:1px solid #ccc;margin-top:-5px;padding:0.5em 0.5em 0.75em}.hidden-visually:not(:focus):not(:active){position:absolute;width:1px;height:1px;margin:-1px;border:0;padding:0;white-space:nowrap;clip-path:inset(100%);clip:rect(0 0 0 0);overflow:hidden}.info, .info *{display: inline;}footer p{text-align:center;}@media screen and (min-width: 50em){.faux-header{display:flex;align-items:baseline;}section{display:flex;align-items:stretch;align-content:stretch}section > *{flex:2 1 auto}.info{padding:0 2em}.run{align-self:center;flex:1 1 auto}}.options p {padding-top:0.25em;padding-bottom:0.25em;}.options input[type="checkbox"]{height:2em;width:2em;}a.cke_button{height: 24px !important;padding:4px 10px!important;}
+    *{box-sizing:border-box}*::after,*::before{box-sizing:border-box}body{font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";margin:0;}.faux-header,footer{background-color:#f1f1f1;padding:1em}.faux-header{border-bottom:1px solid #ccc;margin-bottom:1.5em;}footer{border-top:1px solid #ccc;margin-top:1.5em;padding:3em;}section{padding:0.25em 1em}h1{margin:0}h2{margin:0 0 0.5em}p{line-height:1.4;margin:0.5em 0 0}textarea{border:1px solid #ccc;height:396px;width:100%}button{background-color:#81ecec;border:1px solid #00cec9;border-radius:0.25em;color:#000;cursor:pointer;font-size:1.5em;padding:0.25em 0.5em;margin-bottom:0.5em}button:focus,button:hover{background:#dff;border:1px solid #81ecec}code{background-color:#f9f9f9;border:1px solid #ccc;border-radius:0.25em;font-size:1em;padding:0.1em 0.3em}.run{padding:2em 1em;text-align:center}.muted{background-color:#eee;border:1px solid #ccc;color:#000;font-size:1em}.muted:focus,.muted:hover{background:#ccc;border:1px solid #ccc}.options{background-color:#f1f1f1;border:1px solid #ccc;margin-top:-5px;padding:0.5em 0.5em 0.75em}.hidden-visually:not(:focus):not(:active){position:absolute;width:1px;height:1px;margin:-1px;border:0;padding:0;white-space:nowrap;clip-path:inset(100%);clip:rect(0 0 0 0);overflow:hidden}.info, .info *{display: inline;}footer p{text-align:center;}@media screen and (min-width: 50em){.faux-header{display:flex;align-items:baseline;}section{display:flex;align-items:stretch;align-content:stretch}section > *{flex:2 1 auto}.info{padding:0 2em}.run{align-self:center;flex:1 1 auto}}.options p {padding-top:0.25em;padding-bottom:0.25em;}.options input[type="checkbox"]{height:2em;width:2em;}.paste-area{background:#fff;border:1px solid #ccc;height:352px;overflow-y:auto;padding:0.5em;width:100%}.paste-area:focus-visible{outline:3px solid #00cec9;outline-offset:2px}.paste-area.dragover{background:#dff;border:2px dashed #00cec9;padding:calc(0.5em - 1px)}.upload{margin:0.5em 0 0}.status:not(:empty){background-color:#fffbe6;border:1px solid #ccc;border-radius:0.25em;margin:0.5em 0 0;padding:0.25em 0.5em}
   </style>
 </head>
 <body>
@@ -21,8 +21,11 @@
   </div>
   <section class="tool">
     <div class="before">
-      <h2><label for="wordup">Paste from Word Document</label></h2>
-      <textarea id="wordup"></textarea>
+      <h2 id="wordup-label">Paste from Word Document</h2>
+      <div id="wordup" class="paste-area" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="wordup-label" aria-describedby="wordup-hint"></div>
+      <p id="wordup-hint" class="hidden-visually">Paste copied Word content here, or drop a .docx file on this area. Formatting shortcuts work while editing.</p>
+      <p class="upload"><label for="docxfile">Or upload a Word document (.docx)</label> <input type="file" id="docxfile" name="docxfile" accept=".docx" /></p>
+      <p id="status" class="status" role="status"></p>
     </div>
     <div class="run">
       <p><button id="convert">Convert<span aria-hidden="true"> &rarr;</span></button><br>
@@ -44,8 +47,10 @@
 
 <footer><p>MIT Licensed. Read the <a href="https://jasonmorris.com/code/wordup/">Wordup blog post</a>. Source code on <a href="https://github.com/jsnmrs/wordup">GitHub</a>. Created by <a href="https://jasonmorris.com">Jason Morris</a>.</p></footer>
 
-<script src="vendor/ckeditor4/ckeditor.js"></script>
+<script src="vendor/dompurify/purify.min.js"></script>
+<script src="vendor/mammoth/mammoth.browser.min.js"></script>
 <script src="vendor/turndown/dist/turndown.js"></script>
+<script src="wordcleaner.js"></script>
 <script src="wordup.js"></script>
 
 </body>
