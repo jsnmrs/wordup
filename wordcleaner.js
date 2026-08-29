@@ -62,6 +62,70 @@
     });
   };
 
+  const LIST_STYLE = /mso-list:\s*l\d+\s+level(\d+)/i;
+  const MARKER_STYLE = /mso-list:\s*ignore/i;
+  // Marker text that denotes a numbered item: 1. a) iv. (1) — bare bullet
+  // glyphs (· o § ▪) carry no trailing punctuation and fall through
+  const ORDERED_MARKER = /^\(?[0-9a-z]+[.)\]]/i;
+
+  const getListLevel = (el) => {
+    if (el.tagName !== "P") {
+      return 0;
+    }
+    const match = LIST_STYLE.exec(el.getAttribute("style") || "");
+    return match ? parseInt(match[1], 10) : 0;
+  };
+
+  const findMarker = (paragraph) =>
+    Array.from(paragraph.querySelectorAll("[style]")).find((el) =>
+      MARKER_STYLE.test(el.getAttribute("style") || ""),
+    );
+
+  // Word pastes lists as flat paragraphs carrying mso-list level styles and a
+  // literal marker span; rebuild real nested ul/ol structure from them
+  const rebuildLists = (body) => {
+    const doc = body.ownerDocument;
+    let stack = [];
+    Array.from(body.children).forEach((el) => {
+      const level = getListLevel(el);
+      if (!level) {
+        stack = [];
+        return;
+      }
+      const marker = findMarker(el);
+      const ordered = marker
+        ? ORDERED_MARKER.test(marker.textContent.trim())
+        : false;
+      if (marker) {
+        marker.remove();
+      }
+      stack.length = Math.min(stack.length, level);
+      if (stack.length === level && marker) {
+        const wanted = ordered ? "OL" : "UL";
+        if (stack[stack.length - 1].tagName !== wanted) {
+          stack.pop();
+        }
+      }
+      while (stack.length < level) {
+        const atTargetLevel = stack.length === level - 1;
+        const list = doc.createElement(atTargetLevel && ordered ? "ol" : "ul");
+        const parent = stack[stack.length - 1];
+        if (parent) {
+          (parent.lastElementChild || parent).appendChild(list);
+        } else {
+          body.insertBefore(list, el);
+        }
+        stack.push(list);
+      }
+      const item = doc.createElement("li");
+      while (el.firstChild) {
+        item.appendChild(el.firstChild);
+      }
+      stack[stack.length - 1].appendChild(item);
+      el.remove();
+    });
+  };
+
   // Google Docs marks emphasis with font-weight/font-style on spans and wraps
   // everything in <b style="font-weight:normal">; Word uses real b/i tags.
   const convertStyledSpans = (body) => {
@@ -212,6 +276,7 @@
     const body = doc.body;
     removeComments(body);
     removeJunkElements(body);
+    rebuildLists(body);
     convertStyledSpans(body);
     stripWordAttributes(body);
     normalizeInline(body);
