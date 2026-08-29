@@ -99,6 +99,92 @@ describe("heading normalization", () => {
   });
 });
 
+describe("list reconstruction", () => {
+  it("rebuilds a flat bulleted list", () => {
+    const out = WordCleaner.clean(fixture("bullet-list.html"));
+    expect(out).toBe(
+      "<p>Fruit to buy:</p>\n" +
+        "<ul><li>Red apples</li><li>Bananas</li><li>Concord grapes</li></ul>\n" +
+        "<p>Nothing else.</p>",
+    );
+  });
+
+  it("rebuilds a flat numbered list", () => {
+    const out = WordCleaner.clean(fixture("numbered-list.html"));
+    expect(out).toBe(
+      "<ol><li>Preheat the oven</li><li>Mix the batter</li>" +
+        "<li>Bake for 30 minutes</li></ol>",
+    );
+  });
+
+  it("rebuilds nested lists with mixed markers", () => {
+    const out = WordCleaner.clean(fixture("nested-list.html"));
+    expect(out).toBe(
+      "<ul><li>Produce" +
+        "<ul><li>Apples" +
+        "<ul><li>Honeycrisp</li><li>Fuji</li></ul></li>" +
+        "<li>Pears</li></ul></li>" +
+        "<li>Bakery<ol><li>Sourdough</li></ol></li></ul>",
+    );
+  });
+
+  it("classifies markers: letters and roman numerals are ordered", () => {
+    const item = (marker, text) =>
+      `<p style='text-indent:-.25in;mso-list:l0 level1 lfo1'>` +
+      `<span style='mso-list:Ignore'>${marker}</span>${text}</p>`;
+    expect(WordCleaner.clean(item("a)", "Alpha"))).toBe(
+      "<ol><li>Alpha</li></ol>",
+    );
+    expect(WordCleaner.clean(item("iv.", "Roman"))).toBe(
+      "<ol><li>Roman</li></ol>",
+    );
+    expect(WordCleaner.clean(item("(1)", "Parens"))).toBe(
+      "<ol><li>Parens</li></ol>",
+    );
+    expect(WordCleaner.clean(item("o", "Courier bullet"))).toBe(
+      "<ul><li>Courier bullet</li></ul>",
+    );
+    expect(WordCleaner.clean(item("§", "Wingding"))).toBe(
+      "<ul><li>Wingding</li></ul>",
+    );
+  });
+
+  it("creates intermediate levels when Word skips one", () => {
+    const out = WordCleaner.clean(
+      "<p style='mso-list:l0 level1 lfo1'>" +
+        "<span style='mso-list:Ignore'>·</span>Top</p>" +
+        "<p style='mso-list:l0 level3 lfo1'>" +
+        "<span style='mso-list:Ignore'>§</span>Deep</p>",
+    );
+    expect(out).toBe(
+      "<ul><li>Top<ul><ul><li>Deep</li></ul></ul></li></ul>",
+    );
+  });
+
+  it("starts a new list when the type changes at the same level", () => {
+    const out = WordCleaner.clean(
+      "<p style='mso-list:l0 level1 lfo1'>" +
+        "<span style='mso-list:Ignore'>·</span>Bullet</p>" +
+        "<p style='mso-list:l1 level1 lfo2'>" +
+        "<span style='mso-list:Ignore'>1.</span>Number</p>",
+    );
+    expect(out).toBe("<ul><li>Bullet</li></ul>\n<ol><li>Number</li></ol>");
+  });
+
+  it("ends the list run at a non-list paragraph", () => {
+    const out = WordCleaner.clean(
+      "<p style='mso-list:l0 level1 lfo1'>" +
+        "<span style='mso-list:Ignore'>·</span>One</p>" +
+        "<p>Break</p>" +
+        "<p style='mso-list:l0 level1 lfo1'>" +
+        "<span style='mso-list:Ignore'>·</span>Two</p>",
+    );
+    expect(out).toBe(
+      "<ul><li>One</li></ul>\n<p>Break</p>\n<ul><li>Two</li></ul>",
+    );
+  });
+});
+
 describe("empty block removal", () => {
   it("drops paragraphs that hold only whitespace or nbsp", () => {
     const out = WordCleaner.clean(fixture("empty-paras.html"));
