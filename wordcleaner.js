@@ -287,5 +287,33 @@
     return serialize(body);
   };
 
-  return { clean };
+  // DOMPurify whitelist matching this cleaner's output contract; applied
+  // wherever cleaned or user-entered HTML enters the page
+  const purifyConfig = {
+    ALLOWED_TAGS: [
+      "p",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "strong",
+      "em",
+      "a",
+      "ul",
+      "ol",
+      "li",
+      "table",
+      "thead",
+      "tbody",
+      "tr",
+      "td",
+      "th",
+      "br",
+    ],
+    ALLOWED_ATTR: ["href", "colspan", "rowspan"],
+    ALLOW_DATA_ATTR: false,
+  };
+
+  return { clean, purifyConfig };
 });

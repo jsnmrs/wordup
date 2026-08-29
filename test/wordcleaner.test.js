@@ -1,5 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import DOMPurify from "../vendor/dompurify/purify.min.js";
+import mammoth from "../vendor/mammoth/mammoth.browser.min.js";
 import WordCleaner from "../wordcleaner.js";
 
 const fixture = (name) => readFileSync(`test/fixtures/${name}`, "utf8");
@@ -195,5 +197,43 @@ describe("empty block removal", () => {
 
   it("drops paragraphs that hold only a line break", () => {
     expect(WordCleaner.clean("<p>Kept</p><p><br></p>")).toBe("<p>Kept</p>");
+  });
+});
+
+describe("sanitizer config", () => {
+  const sanitize = (html) =>
+    DOMPurify.sanitize(WordCleaner.clean(html), WordCleaner.purifyConfig);
+
+  it("strips script vectors while keeping content", () => {
+    expect(
+      sanitize('<p onmouseover="alert(1)">Safe <img src=x onerror=alert(1)>text</p>'),
+    ).toBe("<p>Safe text</p>");
+  });
+
+  it("removes javascript hrefs but keeps the link text", () => {
+    const out = sanitize('<p><a href="javascript:alert(1)">click</a></p>');
+    expect(out).toContain("click");
+    expect(out).not.toContain("javascript:");
+  });
+
+  it("keeps the allowed element set intact", () => {
+    const html =
+      "<h2>Title</h2>\n<p><strong>Bold</strong> and <em>italic</em> " +
+      '<a href="https://example.com">link</a></p>\n' +
+      "<ul><li>Item</li></ul>\n" +
+      '<table><tbody><tr><td colspan="2">Cell</td></tr></tbody></table>';
+    expect(DOMPurify.sanitize(html, WordCleaner.purifyConfig)).toBe(html);
+  });
+});
+
+describe("mammoth integration", () => {
+  it("converts fixture.docx to HTML that survives the sanitize pass", async () => {
+    const buffer = readFileSync("test/fixtures/fixture.docx");
+    const result = await mammoth.convertToHtml({
+      arrayBuffer: new Uint8Array(buffer),
+    });
+    const out = DOMPurify.sanitize(result.value, WordCleaner.purifyConfig);
+    expect(out).toContain("<h1>Fixture Heading</h1>");
+    expect(out).toContain("<strong>bold words</strong>");
   });
 });
