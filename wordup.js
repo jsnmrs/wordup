@@ -62,12 +62,29 @@ const EditorManager = (() => {
   // defaultParagraphSeparator hint produce divs on Enter, renamed to p here.
   const getData = () => {
     const doc = new DOMParser().parseFromString(region.innerHTML, "text/html");
+    Array.from(doc.body.childNodes).forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+        const paragraph = doc.createElement("p");
+        node.replaceWith(paragraph);
+        paragraph.appendChild(node);
+      }
+    });
     Array.from(doc.body.querySelectorAll("div")).forEach((div) => {
       const paragraph = doc.createElement("p");
       while (div.firstChild) {
         paragraph.appendChild(div.firstChild);
       }
       div.replaceWith(paragraph);
+    });
+    // Editing shortcuts insert b/i; the output contract uses strong/em
+    Array.from(doc.body.querySelectorAll("b, i")).forEach((el) => {
+      const replacement = doc.createElement(
+        el.tagName === "B" ? "strong" : "em",
+      );
+      while (el.firstChild) {
+        replacement.appendChild(el.firstChild);
+      }
+      el.replaceWith(replacement);
     });
     const html = Array.from(doc.body.children)
       .map((el) => el.outerHTML)
