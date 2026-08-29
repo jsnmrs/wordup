@@ -1,0 +1,13 @@
+{
+  "name": "wordup-dev",
+  "private": true,
+  "description": "Dev-only test tooling for Wordup. The deployed site is plain static files and does not use npm.",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "happy-dom": "^18.0.1",
+    "vitest": "^3.2.4"
+  }
+}
